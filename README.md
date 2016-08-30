@@ -15,7 +15,7 @@ Snipped from Wikipedia
 
 ## Sample usage
 
-```
+```java
     byte[] buf = {
             // English
             0x00, 0x00, 0x00, 0x41,
