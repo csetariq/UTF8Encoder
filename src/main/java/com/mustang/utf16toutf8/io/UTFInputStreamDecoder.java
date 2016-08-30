@@ -5,16 +5,16 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class UTFInputStreamDecoder {
-	
-	protected BufferedInputStream stream;
-	
-	public UTFInputStreamDecoder(InputStream in, int size) throws IOException {
-		stream = new BufferedInputStream(in, size);
-	}
-	
-	public UTFInputStreamDecoder(InputStream in) throws IOException {
-		this(in, 8192);
-	}
+    
+    protected BufferedInputStream stream;
+    
+    public UTFInputStreamDecoder(InputStream in, int size) throws IOException {
+        stream = new BufferedInputStream(in, size);
+    }
+    
+    public UTFInputStreamDecoder(InputStream in) throws IOException {
+        this(in, 8192);
+    }
 
-	public abstract int read() throws IOException;
+    public abstract int read() throws IOException;
 }
