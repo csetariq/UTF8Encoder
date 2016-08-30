@@ -99,7 +99,7 @@ public class UTF8Encoder {
             
             encoded = new byte[1];
             int bit7 = word & 0b111_1111;
-            encoded[0] = (byte) (bit7 | 0b0);
+            encoded[0] = (byte) (bit7 | 0b0_0000000);
             
         } else if (word >= 0x80 && word <= 0x7ff) {
             
