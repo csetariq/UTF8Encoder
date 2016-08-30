@@ -214,4 +214,40 @@ public class UTF8EncoderTest {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * tests the code-point in the range
+     * 
+     *      0x4000000                           -   0x7FFFFFFF
+     *      0b100_0000_0000_0000_0000_0000_0000 -   0b111_1111_1111_1111_1111_1111_1111_1111
+     * 
+     * encoded as
+     * 
+     *      0b1111110_x 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx
+     */
+    @Test
+    public void test31BitsEncode() {
+        byte[] result;
+        try {
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b100_0000_0000_0000_0000_0000_0000);
+            assertArrayEquals(new byte[] { (byte) 0b1111110_0, (byte) 0b10_000100, (byte) 0b10_000000,
+                    (byte) 0b10_000000, (byte) 0b10_000000, (byte) 0b10_000000 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b111_1111_1111_1111_1111_1111_1111);
+            assertArrayEquals(new byte[] { (byte) 0b1111110_0, (byte) 0b10_000111, (byte) 0b10_111111,
+                    (byte) 0b10_111111, (byte) 0b10_111111, (byte) 0b10_111111 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b111_1111_1111_1111_1111_1111_1111_1111);
+            assertArrayEquals(new byte[] { (byte) 0b1111110_1, (byte) 0b10_111111, (byte) 0b10_111111,
+                    (byte) 0b10_111111, (byte) 0b10_111111, (byte) 0b10_111111 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b101_1010_1111_1010_1111_1010_1111_1010);
+            assertArrayEquals(new byte[] { (byte) 0b1111110_1, (byte) 0b10_011010, (byte) 0b10_111110,
+                    (byte) 0b10_101111, (byte) 0b10_101011, (byte) 0b10_111010 }, result);
+            
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 }
