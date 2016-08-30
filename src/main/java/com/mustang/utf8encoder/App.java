@@ -1,4 +1,4 @@
-package com.mustang.utf16toutf8;
+package com.mustang.utf8encoder;
 
 import java.nio.charset.Charset;
 

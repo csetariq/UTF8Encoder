@@ -1,4 +1,4 @@
-package com.mustang.utf16toutf8.io;
+package com.mustang.utf8encoder.io;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;

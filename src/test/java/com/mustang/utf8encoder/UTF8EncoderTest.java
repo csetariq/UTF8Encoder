@@ -1,4 +1,4 @@
-package com.mustang.utf16toutf8;
+package com.mustang.utf8encoder;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -11,6 +11,8 @@ import java.nio.charset.Charset;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.mustang.utf8encoder.UTF8Encoder;
 
 public class UTF8EncoderTest {
 

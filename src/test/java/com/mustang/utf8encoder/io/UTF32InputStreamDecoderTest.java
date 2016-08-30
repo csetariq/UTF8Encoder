@@ -1,4 +1,4 @@
-package com.mustang.utf16toutf8.io;
+package com.mustang.utf8encoder.io;
 
 import static org.junit.Assert.assertEquals;
 
@@ -6,6 +6,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import org.junit.Test;
+
+import com.mustang.utf8encoder.io.UTF32InputStreamDecoder;
 
 public class UTF32InputStreamDecoderTest {
 

@@ -1,4 +1,4 @@
-package com.mustang.utf16toutf8;
+package com.mustang.utf8encoder;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
-import com.mustang.utf16toutf8.io.UTF32InputStreamDecoder;
-import com.mustang.utf16toutf8.io.UTFInputStreamDecoder;
+import com.mustang.utf8encoder.io.UTF32InputStreamDecoder;
+import com.mustang.utf8encoder.io.UTFInputStreamDecoder;
 
 public class UTF8Encoder {
 
