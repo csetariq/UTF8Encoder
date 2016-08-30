@@ -1,21 +1,29 @@
 package com.mustang.utf8encoder;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mustang.utf8encoder.UTF8Encoder;
-
 public class UTF8EncoderTest {
 
+    private static final String TEST_FILE = "alskdjfhg.txt";
     private static UTF8Encoder encodeTestInstance;
     private static Method encodeMethod;
     
@@ -249,5 +257,57 @@ public class UTF8EncoderTest {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
+    }
+    
+    @Test( expected = IllegalStateException.class )
+    public void testEncoderAsAWhole() {
+        byte[] buf = {0x00, 0x00, 0x56, 0x05};
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(buf);
+                FileOutputStream outputStream = new FileOutputStream(TEST_FILE)) {
+            UTF8Encoder utf8Encoder = new UTF8Encoder(inputStream, outputStream, Charset.forName("UTF-32"));
+            utf8Encoder.setWriteBOM(true);
+            
+            assertFalse(utf8Encoder.isConversionDone());
+            assertTrue(utf8Encoder.isWriteBOM());
+            
+            utf8Encoder.convert();
+            
+            assertTrue(utf8Encoder.isConversionDone());
+                        
+            
+            byte[] generatedBuf = new byte[1024]; 
+            try (InputStream in = new FileInputStream(TEST_FILE)) {
+                int read = in.read(generatedBuf);
+
+                byte[] generatedBufTrimmed = Arrays.copyOf(generatedBuf, read);
+
+                byte[] expected = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF, (byte) 0b1110_0101,
+                        (byte) 0b10_011000, (byte) 0b10_000101 };
+
+                assertArrayEquals(expected, generatedBufTrimmed);
+            }
+            
+            utf8Encoder.convert();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
+    
+    @Test (expected = UnsupportedEncodingException.class )
+    public void testUnknownEncoding() throws UnsupportedEncodingException {
+        try {
+            new UTF8Encoder(new ByteArrayInputStream(new byte[] {}), new ByteArrayOutputStream(),
+                    Charset.forName("UTF-16"));
+        } catch (UnsupportedEncodingException e) {
+            throw e;
+        }
+    }
+    
+    @AfterClass
+    public static void cleanUp() {
+        File file = new File(TEST_FILE);
+        if (file.exists())
+            file.delete();
     }
 }
