@@ -158,7 +158,7 @@ public class UTF8Encoder {
             
             int bit2 = word & 0b11;
             encoded[i] = (byte) (bit2 | 0b111110_00);
-        } else if (word >= 4000000 && word <= 0x7fffffff) {
+        } else if (word >= 0x4000000 && word <= 0x7fffffff) {
         
             encoded = new byte[6];
             
