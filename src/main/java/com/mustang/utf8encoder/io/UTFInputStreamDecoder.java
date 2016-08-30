@@ -4,7 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class UTFInputStreamDecoder {
+public abstract class UTFInputStreamDecoder implements AutoCloseable {
     
     protected BufferedInputStream stream;
     
@@ -17,4 +17,11 @@ public abstract class UTFInputStreamDecoder {
     }
 
     public abstract int read() throws IOException;
+
+    @Override
+    public void close() throws Exception {
+        stream.close();
+    }
+    
+    
 }
