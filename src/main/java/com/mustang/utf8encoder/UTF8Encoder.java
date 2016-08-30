@@ -15,16 +15,28 @@ import com.mustang.utf8encoder.io.UTFInputStreamDecoder;
 
 public class UTF8Encoder {
 
+    private static HashMap<Charset, Class<? extends UTFInputStreamDecoder>> decoders;
+    
+    static {
+        initializeDecoders();
+    }
+    
+    private static void initializeDecoders() {
+        decoders = new HashMap<Charset, Class<? extends UTFInputStreamDecoder>>();
+        
+        decoders.put(Charset.forName("UTF-32"), UTF32InputStreamDecoder.class);
+    }
+    
     private InputStream in;
     private OutputStream out;
     private boolean writeBOM;
     private boolean conversionDone;
     private Charset sourceEncoding;
-    private HashMap<Charset, Class<? extends UTFInputStreamDecoder>> decoders;
-    private byte[] BOM = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+    private byte[] BOM = {  (byte) 0xEF, 
+                            (byte) 0xBB, 
+                            (byte) 0xBF };
     
     public UTF8Encoder(InputStream in, OutputStream out, Charset sourceEncoding) throws UnsupportedEncodingException {
-        initializeDecoders();
         if (!decoders.containsKey(sourceEncoding))
             throw new UnsupportedEncodingException();
         this.sourceEncoding = sourceEncoding;
@@ -32,11 +44,6 @@ public class UTF8Encoder {
         this.out = out;
     }
     
-    private void initializeDecoders() {
-        decoders = new HashMap<Charset, Class<? extends UTFInputStreamDecoder>>();
-        
-        decoders.put(Charset.forName("UTF-32"), UTF32InputStreamDecoder.class);
-    }
 
     public boolean isWriteBOM() {
         return writeBOM;
@@ -56,36 +63,26 @@ public class UTF8Encoder {
         if (conversionDone)
             throw new IllegalStateException("conversion already done");
         
-        Class<? extends UTFInputStreamDecoder> decoderClass = decoders.get(sourceEncoding);
-        UTFInputStreamDecoder decoder = null;
-        BufferedOutputStream outStream = null;
         
-        try {
+        try (BufferedOutputStream outStream = new BufferedOutputStream(out)) {
+            Class<? extends UTFInputStreamDecoder> decoderClass = decoders.get(sourceEncoding);
             Constructor<? extends UTFInputStreamDecoder> constructor = decoderClass
                     .getConstructor(InputStream.class);
-            decoder = constructor.newInstance(in);
-            outStream = new BufferedOutputStream(out);
-            
-            if (writeBOM)
+            UTFInputStreamDecoder decoder = constructor.newInstance(in);
+
+            if (writeBOM && in.available() > 0)
                 outStream.write(BOM);
-            
+
             int word;
             while ((word = decoder.read()) != -1) {
                 byte[] encodedWord = encode(word);
                 outStream.write(encodedWord);
             }
-            
-        } catch (NoSuchMethodException | SecurityException | InstantiationException
-                | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+
+        } catch (InvocationTargetException | NoSuchMethodException | SecurityException
+                | InstantiationException | IllegalAccessException | IllegalArgumentException e) {
             e.printStackTrace();
         } finally {
-            if (this.in != null)
-                this.in.close();
-            
-            if (outStream != null) {
-                outStream.flush();
-                outStream.close();
-            }
             conversionDone = true;
         }
         
