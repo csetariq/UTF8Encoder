@@ -151,13 +151,11 @@ public class UTF8Encoder {
     
     private int bit6Slice(byte[] encoded, int word) {
         int i = encoded.length;
-        
         while (--i > 0) {
             int bit6 = word & 0b111111;
             encoded[i] = (byte) (bit6 | 0b10_000000);
             word >>= 6;
         }
-        
         return word;
     }
 }
