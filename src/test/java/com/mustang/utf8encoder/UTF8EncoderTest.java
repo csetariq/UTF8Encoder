@@ -97,4 +97,121 @@ public class UTF8EncoderTest {
             e.printStackTrace();
         }
     }
+    
+    /**
+     * tests the code-point in the range
+     * 
+     *      0x800            -   0xFFFF
+     *      0b1000_0000_0000 -   0b1111_1111_1111_1111
+     * 
+     * encoded as
+     * 
+     *      0b1110_xxxx 0b10_xxxxxx 0b10_xxxxxx
+     */
+    @Test
+    public void test16BitsEncode() {
+        byte[] result;
+        try {
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1000_0000_0000);
+            assertArrayEquals(new byte[] { (byte) 0b1110_0000, (byte) 0b10_100000, (byte) 0b10_000000 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1111_1111_1111_1111);
+            assertArrayEquals(new byte[] { (byte) 0b1110_1111, (byte) 0b10_111111, (byte) 0b10_111111 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1010_1010_1010_1010);
+            assertArrayEquals(new byte[] { (byte) 0b1110_1010, (byte) 0b10_101010, (byte) 0b10_101010 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b0101_0101_0101_0101);
+            assertArrayEquals(new byte[] { (byte) 0b1110_0101, (byte) 0b10_010101, (byte) 0b10_010101 }, result);
+            
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * tests the code-point in the range
+     * 
+     *      0x10000                 -   0x1FFFFF
+     *      0b1_0000_0000_0000_0000 -   0b1_1111_1111_1111_1111_1111
+     * 
+     * encoded as
+     * 
+     *      0b11110_xxx 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx
+     */
+    @Test
+    public void test21BitsEncode() {
+        byte[] result;
+        try {
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1_0000_0000_0000_0000);
+            assertArrayEquals(
+                    new byte[] { (byte) 0b11110_000, (byte) 0b10_010000, (byte) 0b10_000000, (byte) 0b10_000000 },
+                    result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1_0101_1010_0101_1010);
+            assertArrayEquals(
+                    new byte[] { (byte) 0b11110_000, (byte) 0b10_010101, (byte) 0b10_101001, (byte) 0b10_011010 },
+                    result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1_1111_1111_1111_1111_1111);
+            assertArrayEquals(
+                    new byte[] { (byte) 0b11110_111, (byte) 0b10_111111, (byte) 0b10_111111, (byte) 0b10_111111 },
+                    result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b1_0101_0101_0101_0101_0101);
+            assertArrayEquals(
+                    new byte[] { (byte) 0b11110_101, (byte) 0b10_010101, (byte) 0b10_010101, (byte) 0b10_010101 },
+                    result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b0_1010_1010_1010_1010_1010);
+            assertArrayEquals(
+                    new byte[] { (byte) 0b11110_010, (byte) 0b10_101010, (byte) 0b10_101010, (byte) 0b10_101010 },
+                    result);
+            
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * tests the code-point in the range
+     * 
+     *      0x200000                        -   0x3FFFFFF
+     *      0b10_0000_0000_0000_0000_0000   -   0b11_1111_1111_1111_1111_1111_1111
+     * 
+     * encoded as
+     * 
+     *      0b111110_xx 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx 0b10_xxxxxx
+     */
+    @Test
+    public void test26BitsEncode() {
+        byte[] result;
+        try {
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b10_0000_0000_0000_0000_0000);
+            assertArrayEquals(new byte[] { (byte) 0b111110_00, (byte) 0b10_001000, (byte) 0b10_000000,
+                    (byte) 0b10_000000, (byte) 0b10_000000 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b11_1111_1111_1111_1111_1111_1111);
+            assertArrayEquals(new byte[] { (byte) 0b111110_11, (byte) 0b10_111111, (byte) 0b10_111111,
+                    (byte) 0b10_111111, (byte) 0b10_111111 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b10_1010_1010_1010_1010_1010);
+            assertArrayEquals(new byte[] { (byte) 0b111110_00, (byte) 0b10_001010, (byte) 0b10_101010,
+                    (byte) 0b10_101010, (byte) 0b10_101010 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b10_1010_1010_1010_1010_1010_1010);
+            assertArrayEquals(new byte[] { (byte) 0b111110_10, (byte) 0b10_101010, (byte) 0b10_101010,
+                    (byte) 0b10_101010, (byte) 0b10_101010 }, result);
+            
+            result = (byte[]) encodeMethod.invoke(encodeTestInstance, 0b11_1010_0101_1010_0101_1010_0101);
+            assertArrayEquals(new byte[] { (byte) 0b111110_11, (byte) 0b10_101001, (byte) 0b10_011010,
+                    (byte) 0b10_010110, (byte) 0b10_100101 }, result);
+            
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
 }
