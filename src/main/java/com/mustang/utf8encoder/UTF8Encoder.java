@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 import com.mustang.utf8encoder.io.UTF32InputStreamDecoder;
 import com.mustang.utf8encoder.io.UTFInputStreamDecoder;
+import com.sun.xml.internal.fastinfoset.Decoder;
 
 public class UTF8Encoder {
 
@@ -68,19 +69,19 @@ public class UTF8Encoder {
             Class<? extends UTFInputStreamDecoder> decoderClass = decoders.get(sourceEncoding);
             Constructor<? extends UTFInputStreamDecoder> constructor = decoderClass
                     .getConstructor(InputStream.class);
-            UTFInputStreamDecoder decoder = constructor.newInstance(in);
+            try (UTFInputStreamDecoder decoder = constructor.newInstance(in)) {
 
-            if (writeBOM && in.available() > 0)
-                outStream.write(BOM);
+                if (writeBOM && in.available() > 0)
+                    outStream.write(BOM);
 
-            int word;
-            while ((word = decoder.read()) != -1) {
-                byte[] encodedWord = encode(word);
-                outStream.write(encodedWord);
+                int word;
+                while ((word = decoder.read()) != -1) {
+                    byte[] encodedWord = encode(word);
+                    outStream.write(encodedWord);
+                }
             }
 
-        } catch (InvocationTargetException | NoSuchMethodException | SecurityException
-                | InstantiationException | IllegalAccessException | IllegalArgumentException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             conversionDone = true;
