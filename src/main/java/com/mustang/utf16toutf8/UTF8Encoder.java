@@ -105,77 +105,59 @@ public class UTF8Encoder {
             
             encoded = new byte[2];
             
-            int i = encoded.length;
-            
-            while (--i > 0) {
-                int bit6 = word & 0b111111;
-                encoded[i] = (byte) (bit6 | 0b10_000000);
-                word >>= 6;
-            }
+            word = bit6Slice(encoded, word);
             
             int bit5 = word & 0b11111;
-            encoded[i] = (byte) (bit5 | 0b110_00000);
+            encoded[0] = (byte) (bit5 | 0b110_00000);
             
         } else if (word >= 0x800 && word <= 0xffff) {
         
             encoded = new byte[3];
             
-            int i = encoded.length;
-            
-            while (--i > 0) {
-                int bit6 = word & 0b111111;
-                encoded[i] = (byte) (bit6 | 0b10_000000);
-                word >>= 6;
-            }
+            word = bit6Slice(encoded, word);
             
             int bit4 = word & 0b1111;
-            encoded[i] = (byte) (bit4 | 0b1110_0000);
+            encoded[0] = (byte) (bit4 | 0b1110_0000);
         } else if (word >= 0x10000 && word <= 0x1fffff) {
         
             encoded = new byte[4];
             
-            int i = encoded.length;
-            
-            while (--i > 0) {
-                int bit6 = word & 0b111111;
-                encoded[i] = (byte) (bit6 | 0b10_000000);
-                word >>= 6;
-            }
+            word = bit6Slice(encoded, word);
             
             int bit3 = word & 0b111;
-            encoded[i] = (byte) (bit3 | 0b11110_000);
+            encoded[0] = (byte) (bit3 | 0b11110_000);
         } else if (word >= 0x200000 && word <= 0x3ffffff) {
         
             encoded = new byte[5];
             
-            int i = encoded.length;
-            
-            while (--i > 0) {
-                int bit6 = word & 0b111111;
-                encoded[i] = (byte) (bit6 | 0b10_000000);
-                word >>= 6;
-            }
+            word = bit6Slice(encoded, word);
             
             int bit2 = word & 0b11;
-            encoded[i] = (byte) (bit2 | 0b111110_00);
+            encoded[0] = (byte) (bit2 | 0b111110_00);
         } else if (word >= 0x4000000 && word <= 0x7fffffff) {
         
             encoded = new byte[6];
             
-            int i = encoded.length;
-            
-            while (--i > 0) {
-                int bit6 = word & 0b111111;
-                encoded[i] = (byte) (bit6 | 0b10_000000);
-                word >>= 6;
-            }
+            word = bit6Slice(encoded, word);
             
             int bit1 = word & 0b1;
-            encoded[i] = (byte) (bit1 | 0b1111110_0);
+            encoded[0] = (byte) (bit1 | 0b1111110_0);
         } else {
             throw new IllegalArgumentException("invalid code point");
         }
         
         return encoded;
+    }
+    
+    private int bit6Slice(byte[] encoded, int word) {
+        int i = encoded.length;
+        
+        while (--i > 0) {
+            int bit6 = word & 0b111111;
+            encoded[i] = (byte) (bit6 | 0b10_000000);
+            word >>= 6;
+        }
+        
+        return word;
     }
 }
