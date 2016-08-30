@@ -1,4 +1,4 @@
-package com.test;
+package com.mustang.utf16toutf8;
 
 import org.junit.*;
 
