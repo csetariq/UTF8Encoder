@@ -8,11 +8,11 @@ public abstract class UTFInputStreamDecoder implements AutoCloseable {
     
     protected BufferedInputStream stream;
     
-    public UTFInputStreamDecoder(InputStream in, int size) throws IOException {
+    public UTFInputStreamDecoder(InputStream in, int size) {
         stream = new BufferedInputStream(in, size);
     }
     
-    public UTFInputStreamDecoder(InputStream in) throws IOException {
+    public UTFInputStreamDecoder(InputStream in) {
         this(in, 8192);
     }
 
