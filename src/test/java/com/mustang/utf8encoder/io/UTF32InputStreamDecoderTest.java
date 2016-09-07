@@ -3,11 +3,8 @@ package com.mustang.utf8encoder.io;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import org.junit.Test;
-
-import com.mustang.utf8encoder.io.UTF32InputStreamDecoder;
 
 public class UTF32InputStreamDecoderTest {
 
@@ -21,15 +18,14 @@ public class UTF32InputStreamDecoderTest {
                 };
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
         
-        try {
-            UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in);
+        try (UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in)) {
             assertEquals(0x3341, decoder.read());
             assertEquals(0x220042, decoder.read());
             assertEquals(0x11003343, decoder.read());
             assertEquals(0x44, decoder.read());
             assertEquals(-1, decoder.read());
             assertEquals(-1, decoder.read());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -45,14 +41,15 @@ public class UTF32InputStreamDecoderTest {
         };
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
         
-        try {
-            UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in);
+        try (UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in)) {
             assertEquals(0x41, decoder.read());
             assertEquals(0x42, decoder.read());
             assertEquals(0x43, decoder.read());
             assertEquals(0x44, decoder.read());
             decoder.read();
-        } catch (IOException e) {
+        } catch(RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -64,14 +61,15 @@ public class UTF32InputStreamDecoderTest {
         };
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
         
-        try {
-            UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in);
+        try (UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in)) {
             assertEquals(0x41, decoder.read());
             assertEquals(0x42, decoder.read());
             assertEquals(0x43, decoder.read());
             assertEquals(0x44, decoder.read());
             decoder.read();
-        } catch (IOException e) {
+        } catch(RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -81,10 +79,9 @@ public class UTF32InputStreamDecoderTest {
         byte[] buf = {};
         ByteArrayInputStream in = new ByteArrayInputStream(buf);
         
-        try {
-            UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in);
+        try (UTF32InputStreamDecoder decoder = new UTF32InputStreamDecoder(in)) {
             assertEquals(-1, decoder.read());
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
