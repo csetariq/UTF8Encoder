@@ -6,13 +6,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 
 import com.mustang.utf8encoder.io.UTF32InputStreamDecoder;
 import com.mustang.utf8encoder.io.UTFInputStreamDecoder;
-import com.sun.xml.internal.fastinfoset.Decoder;
 
 public class UTF8Encoder {
 
